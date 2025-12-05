@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2048</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="top-tabs">
+        <button class="tab-button active" data-target="sucuk-wrapper">SUCUK TIME</button>
+        <button class="tab-button" data-target="snake-wrapper">SNAKE</button>
+    </div>
+    <div id="sucuk-wrapper" class="game-wrapper">
+        <div class="container">
+            <div class="heart-badge"><span class="flag">🇹🇷</span><span>❤️</span><span class="flag">🇳🇱</span></div>
+            <div class="header">
+                <h1>2048</h1>
+                <div class="scores">
+                    <div class="score-box">
+                        <span class="score-title">SCORE</span>
+                        <span id="score">0</span>
+                    </div>
+                    <div class="score-box">
+                        <span class="score-title">BEST</span>
+                        <span id="best-score">0</span>
+                    </div>
+                    <button id="reset-best" class="reset-best">Reset</button>
+                </div>
+                <div class="theme-toggle">
+                    <input type="checkbox" id="theme-toggle">
+                    <label for="theme-toggle">Dark mode</label>
+                </div>
+            </div>
+            <div class="game-intro">
+                <p>Join the tiles get <strong>2048!</strong></p>
+                <button id="new-game">New Game</button>
+            </div>
+            <div class="combo-widget">
+                <div class="combo-header">
+                    <span class="combo-title">Combo Meter</span>
+                    <span id="combo-level">x0</span>
+                </div>
+                <div class="combo-bar">
+                    <div class="combo-fill"></div>
+                </div>
+                <p class="combo-tip">Chain merges to charge the beam and earn bonuses.</p>
+            </div>
+            <div class="game-container">
+                <div class="grid-container"></div>
+                <div class="game-over">
+                    <img id="game-over-gif" class="game-over-gif" src="assets/game-over-tuson.gif" alt="Game over">
+                    <p>Game Over!</p>
+                    <button id="try-again">Try Again</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="snake-wrapper" class="game-wrapper hidden">
+        <div class="container snake-container">
+            <h1>Snake</h1>
+            <div class="theme-toggle">
+                <input type="checkbox" id="theme-toggle-snake">
+                <label for="theme-toggle-snake">Dark mode</label>
+            </div>
+            <div class="fruit-picker">
+                <button class="fruit-btn" data-fruit="strawberry">🍓</button>
+                <button class="fruit-btn" data-fruit="apple">🍏</button>
+                <button class="fruit-btn" data-fruit="pineapple">🍍</button>
+                <button class="fruit-btn" data-fruit="coconut">🥥</button>
+                <button class="fruit-btn" data-fruit="watermelon">🍉</button>
+                <button class="fruit-btn" data-fruit="doner">🧆</button>
+            </div>
+            <div class="speed-picker">
+                <span>Speed:</span>
+                <button class="speed-btn" data-speed="200">Slow</button>
+                <button class="speed-btn active" data-speed="140">Normal</button>
+                <button class="speed-btn" data-speed="70">Fast</button>
+            </div>
+            <div class="snake-info">
+                <div>Score: <span id="snake-score">0</span></div>
+                <div>Best: <span id="snake-best">0</span></div>
+                <div class="snake-controls">
+                    <button id="snake-pause">Pause</button>
+                    <button id="snake-restart">Restart</button>
+                    <button id="snake-power-toggle">Powerups: On</button>
+                </div>
+            </div>
+            <canvas id="snake-canvas" width="320" height="320" aria-label="Snake game board"></canvas>
+            <p class="snake-tip">Use arrow keys or swipe to move. Eat food, avoid hitting yourself!</p>
+            <div id="snake-game-over" class="snake-game-over hidden">
+                <img src="assets/snake.gif" alt="Snake game over">
+                <div class="snake-go-text">Game Over</div>
+                <button id="snake-go-restart">Play Again</button>
+            </div>
+        </div>
+    </div>
+    <div id="high-score-toast" class="high-score-toast">
+        <img src="assets/john-wick.gif" alt="High score achieved">
+    </div>
+    <div class="creator-credit">
+        <span>Creator: Mustafa (M.B.U)</span>
+        <div class="creator-avatar avatar-placeholder">
+            <img src="assets/creator.jpeg" alt="Portrait of Mustafa (M.B.U)">
+        </div>
+    </div>
+    <script src="game.js"></script>
+    <script src="snake.js"></script>
+    <script>
+      (function() {
+        const tabs = document.querySelectorAll('.tab-button');
+        const wrappers = document.querySelectorAll('.game-wrapper');
+        let snakeInitialized = false;
+        tabs.forEach(btn => {
+          btn.addEventListener('click', () => {
+            tabs.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            wrappers.forEach(w => w.classList.add('hidden'));
+            const target = document.getElementById(btn.dataset.target);
+            if (target) target.classList.remove('hidden');
+            if (btn.dataset.target === 'snake-wrapper' && !snakeInitialized && window.initSnakeGame) {
+              window.initSnakeGame();
+              snakeInitialized = true;
+            }
+          });
+        });
+      })();
+    </script>
+</body>
+</html>
