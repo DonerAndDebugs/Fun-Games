@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2048</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="top-bar">
+        <div class="top-tabs">
+            <button class="tab-button" data-target="sucuk-wrapper">2048</button>
+            <button class="tab-button" data-target="snake-wrapper">SNAKE</button>
+            <button class="tab-button" data-target="pomodoro-wrapper">POMODORA</button>
+        </div>
+        <div class="auth-panel">
+            <div class="auth-user" id="auth-user-label">Guest</div>
+            <button id="auth-open" class="auth-button" type="button">Sign up / Log in</button>
+            <button id="auth-logout" class="auth-button ghost hidden" type="button">Log out</button>
+        </div>
+    </div>
+    <div id="sucuk-wrapper" class="game-wrapper hidden">
+        <div class="container">
+            <div class="heart-badge"><span class="flag">🇹🇷</span><span>❤️</span><span class="flag">🇳🇱</span></div>
+            <div class="header">
+                <h1>2048</h1>
+                <div class="scores">
+                    <div class="score-box">
+                        <span class="score-title">SCORE</span>
+                        <span id="score">0</span>
+                    </div>
+                    <div class="score-box">
+                        <span class="score-title">BEST</span>
+                        <span id="best-score">0</span>
+                    </div>
+                    <button id="reset-best" class="reset-best">Reset</button>
+                </div>
+                <div class="theme-toggle">
+                    <input type="checkbox" id="theme-toggle">
+                    <label for="theme-toggle">Dark mode</label>
+                </div>
+            </div>
+            <div class="game-intro">
+                <p>Join the tiles get <strong>2048!</strong></p>
+                <button id="new-game">New Game</button>
+            </div>
+            <div class="combo-widget">
+                <div class="combo-header">
+                    <span class="combo-title">Combo Meter</span>
+                    <span id="combo-level">x0</span>
+                </div>
+                <div class="combo-bar">
+                    <div class="combo-fill"></div>
+                </div>
+                <p class="combo-tip">Chain merges to charge the beam and earn bonuses.</p>
+            </div>
+            <div class="game-container">
+                <div class="grid-container"></div>
+                <div class="game-over">
+                    <img id="game-over-gif" class="game-over-gif" src="assets/game-over-tuson.gif" alt="Game over">
+                    <p>Game Over!</p>
+                    <button id="try-again">Try Again</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="snake-wrapper" class="game-wrapper hidden">
+        <div class="container snake-container">
+            <h1>Snake</h1>
+            <div class="theme-toggle">
+                <input type="checkbox" id="theme-toggle-snake">
+                <label for="theme-toggle-snake">Dark mode</label>
+            </div>
+            <div class="fruit-picker">
+                <button class="fruit-btn" data-fruit="strawberry">🍓</button>
+                <button class="fruit-btn" data-fruit="apple">🍏</button>
+                <button class="fruit-btn" data-fruit="pineapple">🍍</button>
+                <button class="fruit-btn" data-fruit="coconut">🥥</button>
+                <button class="fruit-btn" data-fruit="watermelon">🍉</button>
+                <button class="fruit-btn" data-fruit="doner">🧆</button>
+            </div>
+            <div class="speed-picker">
+                <span>Speed:</span>
+                <button class="speed-btn" data-speed="200">Slow</button>
+                <button class="speed-btn active" data-speed="140">Normal</button>
+                <button class="speed-btn" data-speed="70">Fast</button>
+            </div>
+            <div class="snake-info">
+                <div>Score: <span id="snake-score">0</span></div>
+                <div>Best: <span id="snake-best">0</span></div>
+                <div class="snake-controls">
+                    <button id="snake-pause">Pause</button>
+                    <button id="snake-restart">Restart</button>
+                    <button id="snake-power-toggle">Powerups: On</button>
+                </div>
+            </div>
+            <canvas id="snake-canvas" width="320" height="320" aria-label="Snake game board"></canvas>
+            <p class="snake-tip">Use arrow keys or swipe to move. Eat food, avoid hitting yourself!</p>
+            <div id="snake-game-over" class="snake-game-over hidden">
+                <img src="assets/snake.gif" alt="Snake game over">
+                <div class="snake-go-text">Game Over</div>
+                <button id="snake-go-restart">Play Again</button>
+            </div>
+        </div>
+    </div>
+    <div id="pomodoro-wrapper" class="game-wrapper">
+        <div class="pomodoro-shell">
+            <header class="pomodoro-header">
+                <div class="pomo-brand">
+                    <span class="pomo-logo" aria-hidden="true">✔</span>
+                    <span class="pomo-name">PomoDora</span>
+                </div>
+                <div class="pomo-actions">
+                    <button class="pomo-chip" id="pomo-open-report" type="button">Report</button>
+                    <div class="pomo-account-wrap">
+                        <span class="pomo-account" id="pomo-account-label">Guest</span>
+                        <button class="pomo-avatar" id="pomo-open-profile" type="button" aria-label="Profile">
+                            <span>MB</span>
+                        </button>
+                    </div>
+                    <button class="pomo-chip settings-btn" id="pomo-open-settings" type="button">Setting</button>
+                </div>
+            </header>
+            <div class="pomodoro-divider"></div>
+            <div class="pomodoro-main">
+                <section class="pomodoro-card">
+                    <div class="pomo-mode-tabs" role="tablist" aria-label="Timer mode">
+                        <button class="pomo-mode active" data-mode="focus" role="tab" aria-selected="true">Pomodoro</button>
+                        <button class="pomo-mode" data-mode="short" role="tab" aria-selected="false">Short Break</button>
+                        <button class="pomo-mode" data-mode="long" role="tab" aria-selected="false">Long Break</button>
+                    </div>
+                    <div class="pomo-time" id="pomo-time" aria-live="polite">25:00</div>
+                    <div class="pomo-controls">
+                        <button class="pomo-primary" id="pomo-start" type="button">START</button>
+                        <button class="pomo-ghost" id="pomo-skip" type="button" aria-label="Skip to next session">Skip</button>
+                    </div>
+                </section>
+                <section class="pomodoro-status">
+                    <div class="pomo-cycle" id="pomo-cycle">#1</div>
+                    <p class="pomo-message" id="pomo-status">Time to focus!</p>
+                </section>
+                <section class="pomodoro-tasks">
+                    <div class="pomo-tasks-header">
+                        <h3>Tasks</h3>
+                        <button class="pomo-ghost icon-only" id="pomo-task-menu" type="button" aria-label="Task options">⋮</button>
+                    </div>
+                    <form class="pomo-task-form" id="pomo-task-form">
+                        <input type="text" id="pomo-task-input" placeholder="Add a task..." autocomplete="off" required>
+                        <button type="submit">Add Task</button>
+                    </form>
+                    <ul class="pomo-task-list" id="pomo-task-list"></ul>
+                </section>
+            </div>
+            <div class="pomo-settings-panel hidden" id="pomo-settings" role="dialog" aria-modal="true" aria-labelledby="pomo-settings-title">
+                <div class="pomo-settings-header">
+                    <h4 id="pomo-settings-title">Settings</h4>
+                    <button class="pomo-ghost icon-only" id="pomo-close-settings" type="button" aria-label="Close settings">✕</button>
+                </div>
+                <div class="pomo-settings-section">
+                    <div class="pomo-settings-title">⏱ Timer</div>
+                    <div class="pomo-settings-grid">
+                        <label>
+                            <span>Pomodoro (minutes)</span>
+                            <input type="number" id="pomo-input-focus" min="1" max="180" value="25">
+                        </label>
+                        <label>
+                            <span>Short Break</span>
+                            <input type="number" id="pomo-input-short" min="1" max="60" value="5">
+                        </label>
+                        <label>
+                            <span>Long Break</span>
+                            <input type="number" id="pomo-input-long" min="1" max="60" value="15">
+                        </label>
+                        <label>
+                            <span>Long Break Interval</span>
+                            <input type="number" id="pomo-input-interval" min="1" max="10" value="4">
+                        </label>
+                    </div>
+                    <div class="pomo-toggle-list">
+                        <label class="pomo-toggle">
+                            <input type="checkbox" id="pomo-auto-breaks">
+                            <span>Auto start breaks</span>
+                        </label>
+                        <label class="pomo-toggle">
+                            <input type="checkbox" id="pomo-auto-focus">
+                            <span>Auto start pomodoros</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="pomo-settings-section">
+                    <div class="pomo-settings-title">☑ Task</div>
+                    <div class="pomo-toggle-list">
+                        <label class="pomo-toggle">
+                            <input type="checkbox" id="pomo-auto-check">
+                            <span>Auto check tasks</span>
+                        </label>
+                        <label class="pomo-toggle">
+                            <input type="checkbox" id="pomo-check-bottom">
+                            <span>Check to bottom</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="pomo-settings-section">
+                    <div class="pomo-settings-title">🔊 Sound</div>
+                    <div class="pomo-sound-row">
+                        <label>
+                            <span>Alarm Sound</span>
+                            <select id="pomo-alarm-sound">
+                                <option value="bell">Bell</option>
+                                <option value="chime">Chime</option>
+                                <option value="buzzer">Buzzer</option>
+                            </select>
+                        </label>
+                        <label class="pomo-sound-inline">
+                            <span>Volume</span>
+                            <input type="range" id="pomo-alarm-volume" min="0" max="100" value="50">
+                        </label>
+                        <label class="pomo-inline-number">
+                            <span>Repeat</span>
+                            <input type="number" id="pomo-alarm-repeat" min="1" max="10" value="1">
+                        </label>
+                    </div>
+                    <div class="pomo-sound-row">
+                        <label>
+                            <span>Ticking Sound</span>
+                            <select id="pomo-ticking-sound">
+                                <option value="none">None</option>
+                                <option value="soft">Soft</option>
+                                <option value="clock">Clock</option>
+                            </select>
+                        </label>
+                        <label class="pomo-sound-inline">
+                            <span>Volume</span>
+                            <input type="range" id="pomo-ticking-volume" min="0" max="100" value="50">
+                        </label>
+                    </div>
+                </div>
+                <div class="pomo-settings-section">
+                    <div class="pomo-settings-title">🎨 Theme</div>
+                    <div class="pomo-color-grid">
+                        <label class="pomo-color-row">
+                            <span>Pomodoro</span>
+                            <input type="color" id="pomo-color-focus" value="#1f2433">
+                        </label>
+                        <label class="pomo-color-row">
+                            <span>Short Break</span>
+                            <input type="color" id="pomo-color-short" value="#0f5447">
+                        </label>
+                        <label class="pomo-color-row">
+                            <span>Long Break</span>
+                            <input type="color" id="pomo-color-long" value="#7c2f2f">
+                        </label>
+                    </div>
+                    <label>
+                        <span>Hour format</span>
+                        <select id="pomo-hour-format">
+                            <option value="24">24-hour</option>
+                            <option value="12">12-hour</option>
+                        </select>
+                    </label>
+                    <label class="pomo-toggle">
+                        <input type="checkbox" id="pomo-dark-running">
+                        <span>Dark mode when running</span>
+                    </label>
+                </div>
+                <div class="pomo-settings-section">
+                    <div class="pomo-settings-title">🔔 Notification</div>
+                    <div class="pomo-notify-row">
+                        <label>
+                            <span>Reminder</span>
+                            <select id="pomo-reminder-type">
+                                <option value="last">Last</option>
+                                <option value="mid">Mid</option>
+                                <option value="first">First</option>
+                            </select>
+                        </label>
+                        <label class="pomo-inline-number">
+                            <span>Minutes</span>
+                            <input type="number" id="pomo-reminder-min" min="1" max="60" value="5">
+                        </label>
+                    </div>
+                </div>
+                <button class="pomo-primary full" id="pomo-save-settings" type="button">DONE</button>
+            </div>
+        </div>
+    </div>
+    <div id="pomo-report" class="pomo-report hidden" role="dialog" aria-modal="true" aria-labelledby="pomo-report-title">
+        <div class="pomo-report-card">
+            <div class="pomo-report-header">
+                <div class="pomo-report-tabs" role="tablist">
+                    <button class="pomo-report-tab active" data-tab="summary" aria-selected="true">Summary</button>
+                    <button class="pomo-report-tab" data-tab="detail" aria-selected="false">Detail</button>
+                    <button class="pomo-report-tab" data-tab="ranking" aria-selected="false">Ranking</button>
+                </div>
+                <button class="pomo-ghost icon-only" id="pomo-close-report" type="button" aria-label="Close report">✕</button>
+            </div>
+            <div class="pomo-report-body">
+                <div class="pomo-report-section report-pane" data-tab-content="summary">
+                    <h4 class="pomo-report-title" id="pomo-report-title">Activity Summary</h4>
+                    <div class="pomo-report-metrics">
+                        <div class="pomo-report-metric">
+                            <div class="metric-icon">⏱</div>
+                            <div class="metric-value" id="pomo-hours-focused">0</div>
+                            <div class="metric-label">hours focused</div>
+                        </div>
+                        <div class="pomo-report-metric">
+                            <div class="metric-icon">📅</div>
+                            <div class="metric-value" id="pomo-days-accessed">0</div>
+                            <div class="metric-label">days accessed</div>
+                        </div>
+                    <div class="pomo-report-metric">
+                        <div class="metric-icon">🔥</div>
+                        <div class="metric-value" id="pomo-day-streak">0</div>
+                        <div class="metric-label">day streak</div>
+                    </div>
+                </div>
+                <div class="pomo-report-section report-pane hidden" data-tab-content="detail">
+                    <div class="pomo-report-section-header">
+                        <h4 class="pomo-report-title">Focus Time Detail</h4>
+                        <div class="pomo-report-actions">
+                            <button class="pomo-ghost" type="button">Insert</button>
+                            <button class="pomo-ghost" type="button">Download</button>
+                        </div>
+                    </div>
+                    <div class="pomo-detail-table">
+                        <div class="pomo-detail-row head">
+                            <div>Date</div>
+                            <div>Project / Task</div>
+                            <div>Minutes</div>
+                        </div>
+                        <div class="pomo-detail-rows" id="pomo-detail-rows">
+                        </div>
+                    </div>
+                </div>
+                <div class="pomo-report-section report-pane hidden" data-tab-content="ranking">
+                    <h4 class="pomo-report-title">Focus Time This Week</h4>
+                    <div class="pomo-ranking" id="pomo-ranking">
+                    </div>
+                </div>
+            </div>
+    </div>
+    <div id="pomo-profile-menu" class="pomo-profile-menu hidden" role="menu">
+        <button type="button" id="profile-login" role="menuitem">Sign up / Log in</button>
+        <button type="button" id="profile-logout" role="menuitem">Log out</button>
+    </div>
+    <div id="high-score-toast" class="high-score-toast">
+        <img src="assets/john-wick.gif" alt="High score achieved">
+    </div>
+    <div id="auth-overlay" class="auth-overlay hidden">
+        <div class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+            <div class="auth-header">
+                <div>
+                    <p class="auth-kicker">Account</p>
+                    <h3 id="auth-title">Create your account</h3>
+                </div>
+                <button class="auth-close" id="auth-close" type="button" aria-label="Close authentication window">✕</button>
+            </div>
+            <div class="auth-mode-switch" role="tablist" aria-label="Auth mode">
+                <button class="auth-mode active" data-mode="signup" type="button" role="tab" aria-selected="true">Sign up</button>
+                <button class="auth-mode" data-mode="login" type="button" role="tab" aria-selected="false">Log in</button>
+            </div>
+            <form id="auth-form" class="auth-form">
+                <label class="auth-field">
+                    <span>Username</span>
+                    <input id="auth-username" name="username" type="text" autocomplete="username" minlength="3" required>
+                </label>
+                <label class="auth-field">
+                    <span>Password</span>
+                    <input id="auth-password" name="password" type="password" autocomplete="new-password" minlength="6" required>
+                </label>
+                <label class="auth-field" id="auth-confirm-row">
+                    <span>Confirm password</span>
+                    <input id="auth-confirm" name="confirm" type="password" autocomplete="new-password" minlength="6" required>
+                </label>
+                <ul class="auth-reqs">
+                    <li>Long: at least 16 characters</li>
+                    <li>Random: mix upper/lowercase, numbers, and symbols <em>or</em> a 5–7 word passphrase</li>
+                    <li>Unique: use only for this account</li>
+                </ul>
+                <div class="auth-message" id="auth-message" aria-live="polite"></div>
+                <button class="auth-submit" id="auth-submit" type="submit">Sign up</button>
+            </form>
+        </div>
+    </div>
+    <div class="creator-credit">
+        <span>Creator: Mustafa (M.B.U)</span>
+        <div class="creator-avatar avatar-placeholder">
+            <img src="assets/creator.jpeg" alt="Portrait of Mustafa (M.B.U)">
+        </div>
+    </div>
+    <script src="game.js"></script>
+    <script src="snake.js"></script>
+    <script src="pomodoro.js"></script>
+    <script src="auth.js"></script>
+    <script>
+      (function() {
+        const tabs = document.querySelectorAll('.tab-button');
+        const wrappers = document.querySelectorAll('.game-wrapper');
+        let snakeInitialized = false;
+        let pomodoroInitialized = false;
+        const pomodoroTab = document.querySelector('.tab-button[data-target="pomodoro-wrapper"]');
+        const tabsWrap = document.querySelector('.top-tabs');
+        tabs.forEach(btn => {
+          btn.addEventListener('click', () => {
+            tabs.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            wrappers.forEach(w => w.classList.add('hidden'));
+            const target = document.getElementById(btn.dataset.target);
+            if (target) target.classList.remove('hidden');
+            document.body.classList.toggle('pomo-focus', btn.dataset.target === 'pomodoro-wrapper');
+            if (btn.dataset.target === 'snake-wrapper' && !snakeInitialized && window.initSnakeGame) {
+              window.initSnakeGame();
+              snakeInitialized = true;
+            }
+            if (btn.dataset.target === 'pomodoro-wrapper' && !pomodoroInitialized && window.initPomodoro) {
+              window.initPomodoro();
+              pomodoroInitialized = true;
+            }
+          });
+        });
+        if (pomodoroTab && tabsWrap) {
+          let hoverTimeout;
+          const addShift = () => {
+            clearTimeout(hoverTimeout);
+            tabsWrap.classList.add('tabs-shift');
+          };
+          const removeShift = () => {
+            clearTimeout(hoverTimeout);
+            hoverTimeout = setTimeout(() => {
+              tabsWrap.classList.remove('tabs-shift');
+            }, 150);
+          };
+          pomodoroTab.addEventListener('mouseenter', addShift);
+          pomodoroTab.addEventListener('mouseleave', removeShift);
+          tabsWrap.addEventListener('mouseleave', removeShift);
+        }
+        const defaultTab = pomodoroTab || tabs[0];
+        if (defaultTab) defaultTab.click();
+      })();
+    </script>
+</body>
+</html>
